@@ -1,0 +1,34 @@
+@import '../../node_modules/bootswatch/dist/darkly/variables';
+@import '../../node_modules/bootstrap/scss/bootstrap';
+@import '../../node_modules/bootswatch/dist/darkly/bootswatch';
+
+#dropZone {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999999999;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  transition:
+    visibility 175ms,
+    opacity 175ms;
+}
+
+#dropText {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+  transition: font-size 175ms;
+  font-size: 10vh;
+}
+
+#uploadButton {
+  width: 100%;
+}
+
+#fileProgress,
+#cancelButton {
+  width: 100%;
+  visibility: hidden;
+}
