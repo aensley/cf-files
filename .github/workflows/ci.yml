@@ -23,11 +23,3 @@ jobs:
         run: npm run build
       - name: Test
         run: npm test
-      - name: Report Coverage
-        if: ${{ matrix.node-version == 18 }}
-        run: |
-          curl -sL https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-          chmod +x ./cc-test-reporter
-          ./cc-test-reporter after-build --coverage-input-type lcov ./coverage/lcov.info
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}

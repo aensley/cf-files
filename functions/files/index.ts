@@ -8,5 +8,5 @@ import { Env } from '../../src/ts/types'
  */
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   const obj = await context.env.FILESR2.list()
-  return new Response(JSON.stringify(obj))
+  return new Response(JSON.stringify(obj.objects))
 }
