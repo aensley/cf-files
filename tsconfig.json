@@ -10,14 +10,13 @@
     "strictNullChecks": true,
     "moduleResolution": "node",
     "typeRoots": ["./node_modules/@types", "./node_modules/@cloudflare"],
-    "types": ["node", "jest", "workers-types"],
+    "types": ["node", "workers-types"],
     "outDir": "./dist/",
     "rootDir": ".",
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true
   },
-  //"include": ["**/*"]
   "include": ["src/**/*", "functions/**/*"],
   "exclude": ["dist/**/*", "test/**/*"]
 }
