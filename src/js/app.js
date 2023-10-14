@@ -98,7 +98,7 @@
     uploadRequest.addEventListener('load', () => console.log(uploadRequest.status, uploadRequest.responseText))
     uploadRequest.addEventListener('error', () => console.log(new Error('File upload failed')))
     uploadRequest.addEventListener('abort', () => console.log(new Error('File upload aborted')))
-    uploadRequest.open('POST', 'files/' + encodeURIComponent(file.name), true)
+    uploadRequest.open('PUT', 'files/' + encodeURIComponent(file.name), true)
     uploadRequest.send(file)
   }
 
