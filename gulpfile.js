@@ -10,8 +10,25 @@ import replace from 'gulp-replace'
 const sass = gulpSass(dartSass)
 let packageJson
 let domain
+const mockFilesList = [
+  {
+    uploaded: '2023-10-01T00:00:00.000Z',
+    checksums: {
+      md5: '1234567890'
+    },
+    httpEtag: '"1234567890"',
+    etag: '1234567890',
+    size: 3273984,
+    version: '1234567890',
+    key: '1.jpg'
+  }
+]
 
 const paths = {
+  dev: {
+    src: 'src/dev/**/*',
+    dest: 'dist/'
+  },
   html: {
     src: 'src/*.html',
     dest: 'dist/'
@@ -113,6 +130,11 @@ async function cloudflareMeta() {
   return gulp.src(paths.cloudflareMeta.src).pipe(gulp.dest(paths.cloudflareMeta.dest))
 }
 
+// Copy files for local dev server
+async function localDev() {
+  return gulp.src(paths.dev.src).pipe(gulp.dest(paths.dev.dest))
+}
+
 // Watch for changes
 function watchSrc() {
   console.warn('Watching for changes... Press [CTRL+C] to stop.')
@@ -123,4 +145,4 @@ function watchSrc() {
 
 export default gulp.series(getPackageInfo, cloudflareMeta, js, scss, html)
 
-export const watch = gulp.series(getPackageInfo, watchSrc)
+export const watch = gulp.series(getPackageInfo, localDev, watchSrc)
