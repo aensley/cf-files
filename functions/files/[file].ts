@@ -7,13 +7,25 @@ import { Env } from '../../src/ts/types'
  * @returns
  */
 export const onRequestGet: PagesFunction<Env> = async (context) => {
-  const file = context.params.file.toString()
-  const obj = await context.env.FILESR2.get(file)
-  if (obj === null) {
+  const fileName: string = context.params.file.toString()
+  const file: R2ObjectBody = (await context.env.FILESR2.get(fileName)) as R2ObjectBody
+  if (file === null) {
     return new Response('Not found', { status: 404 })
   }
 
-  return new Response(obj.body)
+  return new Response(file.body, {
+    headers: {
+      'Content-Description': 'File Transfer',
+      'Content-Type':
+        file.httpMetadata?.contentType !== null ? file.httpMetadata?.contentType : 'application/octet-stream',
+      'Content-Disposition': 'attachment; filename="' + file.key + '"',
+      'Content-Transfer-Encoding':
+        file.httpMetadata?.contentEncoding !== null ? file.httpMetadata.contentEncoding : 'binary',
+      'Content-Length': file.size.toString(),
+      ETag: file.httpEtag,
+      'Last-Modified': file.uploaded.toUTCString()
+    }
+  })
 }
 
 /**
