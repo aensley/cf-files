@@ -14,14 +14,11 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   }
 
   const contentType: string = file.httpMetadata?.contentType as string
-  const contentEncoding: string = file.httpMetadata?.contentEncoding as string
   return new Response(file.body, {
     headers: {
       'Content-Description': 'File Transfer',
       'Content-Type': contentType !== 'undefined' && contentType !== null ? contentType : 'application/octet-stream',
       'Content-Disposition': 'attachment; filename="' + file.key + '"',
-      'Content-Transfer-Encoding':
-        contentEncoding !== 'undefined' && contentEncoding !== null ? contentEncoding : 'binary',
       'Content-Length': file.size.toString(),
       ETag: file.httpEtag,
       'Last-Modified': file.uploaded.toUTCString()
