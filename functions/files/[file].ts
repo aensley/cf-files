@@ -17,7 +17,8 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   return new Response(file.body, {
     headers: {
       'Content-Description': 'File Transfer',
-      'Content-Type': contentType !== 'undefined' && contentType !== null ? contentType : 'application/octet-stream',
+      'Content-Type':
+        typeof contentType !== 'undefined' && contentType !== null ? contentType : 'application/octet-stream',
       'Content-Disposition': 'attachment; filename="' + file.key + '"',
       'Content-Length': file.size.toString(),
       ETag: file.httpEtag,
