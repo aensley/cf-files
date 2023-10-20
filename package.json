@@ -1,6 +1,6 @@
 {
   "name": "@aensley/cf-files",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "File manager for Cloudflare Pages and R2",
   "repository": {
     "type": "git",
