@@ -1,0 +1,128 @@
+{
+  "name": "@aensley/cf-files",
+  "version": "0.1.0",
+  "description": "File manager for Cloudflare Pages and R2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aensley/cf-files.git"
+  },
+  "author": {
+    "name": "Andrew Ensley",
+    "email": "aensley@users.noreply.github.com",
+    "url": "https://andrewensley.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aensley/cf-files/issues/new?assignees=aensley&labels=bug%2Ctriage&template=bug-report.yml&title=%5BBug%5D%3A+"
+  },
+  "funding": [
+    "https://github.com/sponsors/aensley",
+    "https://paypal.me/AndrewEnsley"
+  ],
+  "homepage": "https://github.com/aensley/cf-files#readme",
+  "dependencies": {
+    "bootstrap": "^5.3.2",
+    "bootswatch": "^5.3.2"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20231016.0",
+    "@semantic-release/git": "^10.0.1",
+    "@types/node": "^20.8.7",
+    "commitizen": "^4.3.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "del": "^7.1.0",
+    "gulp": "^4.0.2",
+    "gulp-cli": "^2.3.0",
+    "gulp-file-include": "^2.3.0",
+    "gulp-htmlmin": "^5.0.1",
+    "gulp-minify": "^3.1.0",
+    "gulp-replace": "^1.1.4",
+    "gulp-sass": "^5.1.0",
+    "live-server": "^1.2.2",
+    "pre-commit": "^1.2.2",
+    "prettier": "^3.0.3",
+    "sass": "^1.69.4",
+    "ts-standard": "^12.0.2",
+    "typescript": "^5.2.2"
+  },
+  "pre-commit": [
+    "precommit-msg",
+    "test"
+  ],
+  "scripts": {
+    "precommit-msg": "echo Running pre-commit checks...",
+    "clean": "gulp clean",
+    "format": "prettier --write .",
+    "test": "ts-standard && prettier --check .",
+    "fix": "ts-standard --fix && prettier --write .",
+    "build": "npm run clean && gulp",
+    "watch": "npm run build && gulp watch",
+    "update": "npx --yes npm-check-updates -u && npm update",
+    "start": "live-server dist",
+    "setup": "npm ci && npm run prepare-hook",
+    "prepare-hook": "cp -a prepare-commit-msg .git/hooks/prepare-commit-msg && chmod +x .git/hooks/prepare-commit-msg"
+  },
+  "type": "module",
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      [
+        "@semantic-release/npm",
+        {
+          "npmPublish": false
+        }
+      ],
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "package.json"
+          ]
+        }
+      ],
+      "@semantic-release/github"
+    ]
+  },
+  "eslintConfig": {
+    "extends": "standard-with-typescript",
+    "parserOptions": {
+      "project": "./tsconfig.json"
+    }
+  },
+  "ts-standard": {
+    "globals": [],
+    "ignore": [
+      "/tests/**/*.ts",
+      "/gulpfile.js"
+    ]
+  },
+  "prettier": {
+    "tabWidth": 2,
+    "printWidth": 120,
+    "useTabs": false,
+    "endOfLine": "lf",
+    "trailingComma": "none",
+    "semi": false,
+    "singleQuote": true,
+    "arrowParens": "always",
+    "bracketSameLine": true,
+    "bracketSpacing": true,
+    "embeddedLanguageFormatting": "auto",
+    "htmlWhitespaceSensitivity": "css",
+    "insertPragma": false,
+    "jsxSingleQuote": false,
+    "proseWrap": "preserve",
+    "quoteProps": "as-needed",
+    "requirePragma": false,
+    "vueIndentScriptAndStyle": false
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "CommonJS",
+    "lib": ["ESNext"],
+    "declaration": true,
+    "sourceMap": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "strictNullChecks": true,
+    "moduleResolution": "node",
+    "typeRoots": ["./node_modules/@types", "./node_modules/@cloudflare"],
+    "types": ["node", "workers-types"],
+    "outDir": "./dist/",
+    "rootDir": ".",
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true
+  },
+  "include": ["src/**/*", "functions/**/*"],
+  "exclude": ["dist/**/*", "test/**/*"]
+}

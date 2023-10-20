@@ -1,0 +1,57 @@
+{
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#177569",
+    "activityBar.activeBorder": "#5a5b85",
+    "activityBar.background": "#177569",
+    "activityBar.foreground": "#e7e7e7",
+    "activityBar.inactiveForeground": "#e7e7e799",
+    "activityBarBadge.background": "#d77ae5",
+    "activityBarBadge.foreground": "#15202b",
+    "sash.hoverBorder": "#177569",
+    "statusBar.background": "#0f4b43",
+    "statusBar.foreground": "#e7e7e7",
+    "statusBarItem.hoverBackground": "#177569",
+    "statusBarItem.remoteBackground": "#0f4b43",
+    "statusBarItem.remoteForeground": "#e7e7e7",
+    "titleBar.activeBackground": "#0f4b43",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveBackground": "#0f4b4399",
+    "titleBar.inactiveForeground": "#e7e7e799",
+    "commandCenter.border": "#e7e7e799"
+  },
+  "peacock.color": "#0f4b43",
+  "liveServer.settings.root": "/dist/",
+  "liveServer.settings.donotShowInfoMsg": true,
+  "liveServer.settings.donotVerifyTags": true,
+  "editor.renderWhitespace": "all",
+  "editor.rulers": [80, 120],
+  "editor.tabSize": 2,
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "files.trimTrailingWhitespace": true,
+  "javascript.validate.enable": false,
+  "javascript.format.enable": false,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "standard.enableGlobally": true,
+  "standard.autoFixOnSave": true,
+  "standard.usePackageJson": true,
+  "html.format.endWithNewline": true,
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "files.eol": "\n",
+  "[ignore]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[properties]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[php]": {
+    "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
+  },
+  "[xml]": {
+    "editor.defaultFormatter": "DotJoshJohnson.xml"
+  },
+  "[shellscript]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  }
+}
