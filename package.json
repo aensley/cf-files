@@ -1,6 +1,6 @@
 {
   "name": "@aensley/cf-files",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "description": "File manager for Cloudflare Pages and R2",
   "repository": {
     "type": "git",
@@ -25,9 +25,9 @@
     "bootswatch": "^5.3.2"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20231002.0",
+    "@cloudflare/workers-types": "^4.20231016.0",
     "@semantic-release/git": "^10.0.1",
-    "@types/node": "^20.8.3",
+    "@types/node": "^20.8.7",
     "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
     "del": "^7.1.0",
@@ -41,7 +41,7 @@
     "live-server": "^1.2.2",
     "pre-commit": "^1.2.2",
     "prettier": "^3.0.3",
-    "sass": "^1.69.0",
+    "sass": "^1.69.4",
     "ts-standard": "^12.0.2",
     "typescript": "^5.2.2"
   },

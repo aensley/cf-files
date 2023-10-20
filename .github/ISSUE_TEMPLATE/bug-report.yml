@@ -9,13 +9,6 @@ body:
     attributes:
       value: |
         Thanks for taking the time to fill out a bug report!
-  - type: input
-    id: node-version
-    attributes:
-      label: Node Version
-      description: What version of Node are you using?
-    validations:
-      required: true
   - type: textarea
     id: what-happened
     attributes:
