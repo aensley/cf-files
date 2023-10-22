@@ -1,6 +1,26 @@
+// Configuration
+@import '../../node_modules/bootstrap/scss/functions';
+
+// Custom Bootswatch theme variables
 @import '../../node_modules/bootswatch/dist/darkly/variables';
-@import '../../node_modules/bootstrap/scss/bootstrap';
-@import '../../node_modules/bootswatch/dist/darkly/bootswatch';
+
+// Bootstrap Configuration continued
+@import '../../node_modules/bootstrap/scss/variables';
+@import '../../node_modules/bootstrap/scss/variables-dark';
+@import '../../node_modules/bootstrap/scss/maps';
+@import '../../node_modules/bootstrap/scss/mixins';
+@import '../../node_modules/bootstrap/scss/utilities';
+
+// Layout & components
+@import '../../node_modules/bootstrap/scss/root';
+@import '../../node_modules/bootstrap/scss/reboot';
+@import '../../node_modules/bootstrap/scss/containers';
+@import '../../node_modules/bootstrap/scss/grid';
+@import '../../node_modules/bootstrap/scss/tables';
+@import '../../node_modules/bootstrap/scss/buttons';
+
+// Utilities
+@import '../../node_modules/bootstrap/scss/utilities/api';
 
 #dropZone {
   position: fixed;
