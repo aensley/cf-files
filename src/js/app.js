@@ -1,4 +1,5 @@
 /* global XMLHttpRequest, confirm */
+import { isImage } from '../ts/image.ts'
 
 // Wrap everything in a SEAF for optimized minification
 ;(function () {
@@ -70,6 +71,7 @@
               '<a href="/files/' +
                 encodeURIComponent(file.key) +
                 '">' +
+                (isImage(file.key) ? '<img src="/files/thumbs/' + encodeURIComponent(file.key) + '.jpg" /> ' : '') +
                 downloadIcon +
                 ' ' +
                 escapeHtml(file.key) +

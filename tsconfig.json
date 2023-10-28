@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "ES2022",
     "module": "CommonJS",
-    "lib": ["ESNext"],
+    "lib": ["ES2022"],
     "declaration": true,
     "sourceMap": true,
     "strict": true,
+    "pretty": false,
     "esModuleInterop": true,
     "strictNullChecks": true,
     "moduleResolution": "node",
