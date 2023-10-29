@@ -133,10 +133,12 @@ async function js() {
     .pipe(sourcemaps.init({ loadMaps: true }))
     .pipe(
       through.obj(function (file, enc, cba) {
-        // Dont pipe through any source map files. They will be handled by gulp-sourcemaps.
-        if (!/\.map$/.test(file.path)) {
+        // Don't pipe through any source map files. They will be handled by gulp-sourcemaps.
+        // Also filter out /functions/ files and *.d.ts files
+        if (!/\.map$/.test(file.path) && !/functions/.test(file.path) && !/\.d\.ts$/.test(file.path)) {
           this.push(file)
         }
+
         cba()
       })
     )
