@@ -1,5 +1,5 @@
 import { Env } from '../../src/ts/types'
-import imageThumbnail, { Options } from 'image-thumbnail'
+// import imageThumbnail, { Options } from 'image-thumbnail'
 import { isImage, streamToBuffer } from '../../src/ts/image'
 
 /**
@@ -43,7 +43,7 @@ export const onRequestPut: PagesFunction<Env> = async (context) => {
   await context.env.FILESR2.put(fileName, fileContents)
   if (isImage(fileName)) {
     const fileContentsBuffer: Buffer = await streamToBuffer(fileContents)
-    const options: {
+    /*const options: {
       responseType: 'buffer'
       jpegOptions: {
         force: true
@@ -59,6 +59,7 @@ export const onRequestPut: PagesFunction<Env> = async (context) => {
     }
     const thumbnail = await imageThumbnail(fileContentsBuffer, options)
     await context.env.FILESR2.put('thumbs/' + fileName + '.jpg', thumbnail)
+    */
   }
 
   return new Response(`Put ${fileName} successfully!`)
