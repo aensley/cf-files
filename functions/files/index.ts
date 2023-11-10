@@ -1,4 +1,4 @@
-import { Env } from '../../src/ts/types'
+import { Env, FileProperties } from '../../src/ts/types'
 
 /**
  * Return file list
@@ -8,5 +8,20 @@ import { Env } from '../../src/ts/types'
  */
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   const obj = await context.env.FILESR2.list()
-  return new Response(JSON.stringify(obj.objects))
+  const files: FileProperties[] = []
+
+  obj.objects.forEach((file) => {
+    if (file.key.startsWith('thumbs/')) {
+      // Skip thumbnails
+      return
+    }
+
+    files.push({
+      key: file.key,
+      size: file.size,
+      uploaded: file.uploaded
+    })
+  })
+
+  return new Response(JSON.stringify(files))
 }

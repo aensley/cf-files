@@ -1,10 +1,12 @@
 import { Env } from '../../src/ts/types'
+import { isImage } from '../../src/ts/file'
 
 /**
  * Handle file Download
  *
- * @param context
- * @returns
+ * @param context The request context.
+ *
+ * @returns {Response} The Response object.
  */
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   const fileName: string = context.params.file.toString()
@@ -30,23 +32,30 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 /**
  * Handle file Upload
  *
- * @param context
- * @returns
+ * @param context The request context.
+ *
+ * @returns {Response} The Response object.
  */
 export const onRequestPut: PagesFunction<Env> = async (context) => {
-  const file = context.params.file.toString()
-  await context.env.FILESR2.put(file, context.request.body)
-  return new Response(`Put ${file} successfully!`)
+  const fileName: string = context.params.file.toString()
+  const fileContents: ReadableStream = context.request.body as ReadableStream
+  await context.env.FILESR2.put(fileName, fileContents)
+  return new Response(`Put ${fileName} successfully!`)
 }
 
 /**
- * Handle file Delete
+ * Handle file Delete.
  *
- * @param context
- * @returns
+ * @param context The request context.
+ *
+ * @returns {Response} The Response object.
  */
 export const onRequestDelete: PagesFunction<Env> = async (context) => {
-  const file = context.params.file.toString()
-  await context.env.FILESR2.delete(file)
-  return new Response(`Deleted ${file} successfully!`)
+  const fileName: string = context.params.file.toString()
+  await context.env.FILESR2.delete(fileName)
+  if (isImage(fileName)) {
+    await context.env.FILESR2.delete('thumbs/' + fileName + '.jpg')
+  }
+
+  return new Response(`Deleted ${fileName} successfully!`)
 }

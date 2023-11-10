@@ -4,12 +4,15 @@ import fileinclude from 'gulp-file-include'
 import htmlmin from 'gulp-htmlmin'
 import * as dartSass from 'sass'
 import gulpSass from 'gulp-sass'
-import minify from 'gulp-minify'
 import fs from 'fs'
 import replace from 'gulp-replace'
+import webpack from 'webpack-stream'
+import through from 'through2'
+import named from 'vinyl-named'
+import sourcemaps from 'gulp-sourcemaps'
+
 const sass = gulpSass(dartSass)
 let packageJson
-let domain
 const mockFilesList = [
   {
     uploaded: '2023-10-01T00:00:00.000Z',
@@ -45,17 +48,16 @@ const paths = {
   scss: {
     src: 'src/scss/*.scss',
     dest: 'dist/css/'
+  },
+  ts: {
+    src: 'src/ts/image.ts',
+    dest: 'dist/ts/'
   }
 }
 
 // Get Package information from package.json
 async function getPackageInfo() {
   packageJson = JSON.parse(fs.readFileSync('package.json'))
-  domain = process.env.DOMAIN || ''
-  if (domain.startsWith('https://')) {
-    domain = domain.substring(8)
-  }
-
   return Promise.resolve()
 }
 
@@ -73,8 +75,6 @@ async function html() {
     .pipe(replace('{{branch-name}}', process.env.CF_PAGES_BRANCH))
     .pipe(replace('{{environment}}', process.env.CF_PAGES_BRANCH === 'main' ? 'production' : 'development'))
     .pipe(replace('{{sentry-dsn}}', process.env.SENTRY_DSN))
-    .pipe(replace('{{domain}}', domain))
-    .pipe(replace('{{link-to-dash}}', process.env.LINK_TO_DASH ? '<a href="dash">Manage</a>' : ''))
     .pipe(replace('{{package-name}}', packageJson.name))
     .pipe(replace('{{package-version}}', packageJson.version))
     .pipe(
@@ -98,22 +98,51 @@ async function html() {
 async function js() {
   return gulp
     .src(paths.js.src)
-    .pipe(replace('{{commit-hash}}', process.env.CF_PAGES_COMMIT_SHA))
-    .pipe(replace('{{branch-name}}', process.env.CF_PAGES_BRANCH))
-    .pipe(replace('{{environment}}', process.env.CF_PAGES_BRANCH === 'main' ? 'production' : 'development'))
-    .pipe(replace('{{sentry-dsn}}', process.env.SENTRY_DSN))
-    .pipe(replace('{{domain}}', domain))
-    .pipe(replace('{{link-to-dash}}', process.env.LINK_TO_DASH ? '<a href="dash">Manage</a>' : ''))
-    .pipe(replace('{{package-name}}', packageJson.name))
-    .pipe(replace('{{package-version}}', packageJson.version))
+    .pipe(named())
     .pipe(
-      minify({
-        ext: {
-          src: '-src.js',
-          min: '.js'
+      webpack({
+        devtool: 'source-map',
+        mode: 'production',
+        module: {
+          rules: [
+            {
+              test: /\.ts$/,
+              use: 'ts-loader'
+            },
+            {
+              test: /\.js$/i,
+              loader: 'string-replace-loader',
+              options: {
+                multiple: [
+                  { search: '{{commit-hash}}', replace: process.env.CF_PAGES_COMMIT_SHA },
+                  { search: '{{branch-name}}', replace: process.env.CF_PAGES_BRANCH },
+                  {
+                    search: '{{environment}}',
+                    replace: process.env.CF_PAGES_BRANCH === 'main' ? 'production' : 'development'
+                  },
+                  { search: '{{sentry-dsn}}', replace: process.env.SENTRY_DSN },
+                  { search: '{{package-name}}', replace: packageJson.name },
+                  { search: '{{package-version}}', replace: packageJson.version }
+                ]
+              }
+            }
+          ]
         }
       })
     )
+    .pipe(sourcemaps.init({ loadMaps: true }))
+    .pipe(
+      through.obj(function (file, enc, cba) {
+        // Don't pipe through any source map files. They will be handled by gulp-sourcemaps.
+        // Also filter out /functions/ files and *.d.ts files
+        if (!/\.map$/.test(file.path) && !/functions/.test(file.path) && !/\.d\.ts$/.test(file.path)) {
+          this.push(file)
+        }
+
+        cba()
+      })
+    )
+    .pipe(sourcemaps.write('.', { addComment: false }))
     .pipe(gulp.dest(paths.js.dest))
 }
 

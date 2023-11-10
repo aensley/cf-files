@@ -1,4 +1,5 @@
-/* global XMLHttpRequest, confirm */
+/* global XMLHttpRequest, confirm, Image */
+import { isImage, isVideo } from '../ts/file.ts'
 
 // Wrap everything in a SEAF for optimized minification
 ;(function () {
@@ -23,8 +24,6 @@
   }
 
   const escapeElement = createElement('textarea')
-  const downloadIcon =
-    '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download me-1" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>'
   const deleteIcon =
     '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill me-1" viewBox="0 0 16 16"><path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z"/></svg>'
 
@@ -67,13 +66,14 @@
             createElement(
               'td',
               // File name and download link.
-              '<a href="/files/' +
-                encodeURIComponent(file.key) +
-                '">' +
-                downloadIcon +
-                ' ' +
-                escapeHtml(file.key) +
-                '</a>'
+              '<a href="/files/' + encodeURIComponent(file.key) + '">' + getPreview(file.key) + '</a>'
+            )
+          )
+          tr.appendChild(
+            createElement(
+              'td',
+              // File name and download link.
+              '<a href="/files/' + encodeURIComponent(file.key) + '">' + escapeHtml(file.key) + '</a>'
             )
           )
           // File size.
@@ -106,15 +106,24 @@
       })
   }
 
+  const getPreview = (fileName) => {
+    if (isImage(fileName) || isVideo(fileName)) {
+      return '<img class="thumb" src="/files/thumbs/' + encodeURIComponent(fileName) + '.jpg" />'
+    }
+
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-fill" viewBox="0 0 16 16"><path d="M4 0h5.293A1 1 0 0 1 10 .293L13.707 4a1 1 0 0 1 .293.707V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm5.5 1.5v2a1 1 0 0 0 1 1h2l-3-3z"/></svg>'
+  }
+
   /**
    * Upload a file.
    *
    * @param {File} file The file to upload.
    */
-  const uploadFile = (file) => {
+  const uploadFile = async (file) => {
     fileProgress.style.visibility = 'visible'
     cancelButton.style.visibility = 'visible'
     fileName.textContent = file.name
+    uploadThumb(file)
     uploadRequest = new XMLHttpRequest()
     uploadRequest.upload.addEventListener('progress', (e) => {
       const percent = ((e.loaded / e.total) * 100).toFixed(1)
@@ -136,6 +145,119 @@
     })
     uploadRequest.open('PUT', 'files/' + encodeURIComponent(file.name), true)
     uploadRequest.send(file)
+  }
+
+  /**
+   * Generates and uploads a thumbnail for the file if applicable.
+   *
+   * @param {File} file The file to upload a thumbnail for.
+   */
+  const uploadThumb = async (file) => {
+    let thumbnailData
+    if (isImage(file.name)) {
+      thumbnailData = await generateImageThumbnail(file, 100, 75)
+    } else if (isVideo(file.name)) {
+      thumbnailData = await generateVideoThumbnail(file, 100, 75)
+    }
+
+    if (typeof thumbnailData !== 'undefined') {
+      const thumbUploadRequest = new XMLHttpRequest()
+      thumbUploadRequest.addEventListener('load', () => {
+        console.log(thumbUploadRequest.status, thumbUploadRequest.responseText)
+      })
+      thumbUploadRequest.addEventListener('error', () => {
+        console.log(new Error('Thumbnail upload failed'))
+      })
+      thumbUploadRequest.open('PUT', 'files/thumbs/' + encodeURIComponent(file.name) + '.jpg', true)
+      thumbUploadRequest.send(thumbnailData.data)
+    }
+  }
+
+  /**
+   * Converts a data URL string to a File object.
+   *
+   * @param {string} dataUrl  The data URL representing the image.
+   * @param {string} fileName The name of the file.
+   *
+   * @returns {File} The File object.
+   */
+  const dataURLtoFile = (dataUrl, fileName) => {
+    const arr = dataUrl.split(',')
+    const mime = arr[0].match(/:(.*?);/)[1]
+    const bstr = atob(arr[1])
+    let n = bstr.length
+    const u8arr = new Uint8Array(n)
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n)
+    }
+
+    return new File([u8arr], fileName, { type: mime })
+  }
+
+  /**
+   * Creates a thumbnail from a File object containing an image.
+   * The thumbnail is contained within maximum dimensions while preserving aspect ratio.
+   *
+   * @param {File}   file      The image file to create a thumbnail from.
+   * @param {Number} maxWidth  The maximum width for the generated thumbnail.
+   * @param {Number} maxHeight The maximum height for the generated thumbnail.
+   *
+   * @returns {Promise<ImageData>} The generated thumbnail as an ImageData object.
+   */
+  const generateImageThumbnail = (file, maxWidth, maxHeight) => {
+    const canvas = createElement('canvas')
+    const ctx = canvas.getContext('2d')
+    return new Promise((resolve) => {
+      const img = new Image()
+      img.onload = function () {
+        const scaleRatio = Math.min(maxWidth / img.width, maxHeight / img.height, 1)
+        const w = Math.floor(img.width * scaleRatio)
+        const h = Math.floor(img.height * scaleRatio)
+        canvas.width = w
+        canvas.height = h
+        ctx.drawImage(img, 0, 0, w, h)
+        return resolve(dataURLtoFile(canvas.toDataURL('image/jpeg'), file.key + '.jpg'))
+      }
+
+      img.src = window.URL.createObjectURL(file)
+    })
+  }
+
+  /**
+   * Creates a thumbnail from a File object containing an image.
+   * The thumbnail is contained within maximum dimensions while preserving aspect ratio.
+   *
+   * @param {File}   file      The image file to create a thumbnail from.
+   * @param {Number} maxWidth  The maximum width for the generated thumbnail.
+   * @param {Number} maxHeight The maximum height for the generated thumbnail.
+   *
+   * @returns {Promise<ImageData>} The generated thumbnail as an ImageData object.
+   */
+  const generateVideoThumbnail = (file, maxWidth, maxHeight) => {
+    return new Promise((resolve) => {
+      const canvas = createElement('canvas')
+      const video = createElement('video')
+
+      video.autoplay = true
+      video.muted = true
+      video.onloadeddata = () => {
+        const ctx = canvas.getContext('2d')
+        const scaleRatio = Math.min(maxWidth / video.videoWidth, maxHeight / video.videoHeight, 1)
+        const w = Math.floor(video.videoWidth * scaleRatio)
+        const h = Math.floor(video.videoHeight * scaleRatio)
+
+        canvas.width = w
+        canvas.height = h
+
+        ctx.drawImage(video, 0, 0, w, h)
+        // Seek to 5 seconds in, or half the length of the video, whichever is less.
+        video.currentTime = Math.floor(Math.min(5, video.duration / 2))
+        video.pause()
+        return resolve(dataURLtoFile(canvas.toDataURL('image/jpeg'), file.key + '.jpg'))
+      }
+
+      video.src = window.URL.createObjectURL(file)
+    })
   }
 
   /**
