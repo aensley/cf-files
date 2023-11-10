@@ -18,7 +18,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
   expiry.setFullYear(expiry.getFullYear() + 1)
   return new Response(file.body, {
     headers: {
-      'Content-Type': 'image/jpeg',
+      'Content-Type': 'data:image/jpeg',
       'Content-Length': file.size.toString(),
       ETag: file.httpEtag,
       Expires: expiry.toUTCString(),
