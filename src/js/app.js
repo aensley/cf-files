@@ -174,6 +174,27 @@ import { isImage, isVideo } from '../ts/file.ts'
   }
 
   /**
+   * Converts a data URL string to a File object.
+   *
+   * @param {string} dataUrl  The data URL representing the image.
+   * @param {string} fileName The name of the file.
+   *
+   * @returns {File} The File object.
+   */
+  const dataURLtoFile = (dataUrl, fileName) => {
+    const arr = dataUrl.split(',')
+    const mime = arr[0].match(/:(.*?);/)[1]
+    const bstr = atob(arr[1])
+    let n = bstr.length
+    const u8arr = new Uint8Array(n)
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n)
+    }
+
+    return new File([u8arr], fileName, { type: mime })
+  }
+
+  /**
    * Creates a thumbnail from a File object containing an image.
    * The thumbnail is contained within maximum dimensions while preserving aspect ratio.
    *
@@ -195,7 +216,7 @@ import { isImage, isVideo } from '../ts/file.ts'
         canvas.width = w
         canvas.height = h
         ctx.drawImage(img, 0, 0, w, h)
-        return resolve(ctx.getImageData(0, 0, canvas.width, canvas.height))
+        return resolve(dataURLtoFile(canvas.toDataURL('image/jpeg'), file.key + '.jpg'))
       }
 
       img.src = window.URL.createObjectURL(file)
@@ -232,7 +253,7 @@ import { isImage, isVideo } from '../ts/file.ts'
         // Seek to 5 seconds in, or half the length of the video, whichever is less.
         video.currentTime = Math.floor(Math.min(5, video.duration / 2))
         video.pause()
-        return resolve(ctx.getImageData(0, 0, canvas.width, canvas.height))
+        return resolve(dataURLtoFile(canvas.toDataURL('image/jpeg'), file.key + '.jpg'))
       }
 
       video.src = window.URL.createObjectURL(file)
