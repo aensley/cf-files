@@ -169,7 +169,7 @@ import { isImage, isVideo } from '../ts/file.ts'
         console.log(new Error('Thumbnail upload failed'))
       })
       thumbUploadRequest.open('PUT', 'files/thumbs/' + encodeURIComponent(file.name) + '.jpg', true)
-      thumbUploadRequest.send(thumbnailData)
+      thumbUploadRequest.send(thumbnailData.data)
     }
   }
 
