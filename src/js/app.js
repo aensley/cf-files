@@ -204,7 +204,7 @@ import { isImage, isVideo } from '../ts/file.ts'
         canvas.width = w
         canvas.height = h
         ctx.drawImage(img, 0, 0, w, h)
-        return resolve(canvas.toDataURL(file.type))
+        return resolve(canvas.getImageData(0, 0, canvas.width, canvas.height))
       }
 
       img.src = window.URL.createObjectURL(file)
@@ -241,7 +241,7 @@ import { isImage, isVideo } from '../ts/file.ts'
         // Seek to 5 seconds in, or half the length of the video, whichever is less.
         video.currentTime = Math.floor(Math.min(5, video.duration / 2))
         video.pause()
-        return resolve(canvas.toDataURL('image/jpeg'))
+        return resolve(canvas.getImageData(0, 0, canvas.width, canvas.height))
       }
 
       video.src = window.URL.createObjectURL(file)
