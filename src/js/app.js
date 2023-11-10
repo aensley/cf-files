@@ -190,7 +190,7 @@ import { isImage, isVideo } from '../ts/file.ts'
    * @param {Number} maxWidth  The maximum width for the generated thumbnail.
    * @param {Number} maxHeight The maximum height for the generated thumbnail.
    *
-   * @returns {Promise<string>} The generated thumbnail as a base64 dataURL.
+   * @returns {Promise<ImageData>} The generated thumbnail as an ImageData object.
    */
   const generateImageThumbnail = (file, maxWidth, maxHeight) => {
     const canvas = createElement('canvas')
@@ -204,7 +204,7 @@ import { isImage, isVideo } from '../ts/file.ts'
         canvas.width = w
         canvas.height = h
         ctx.drawImage(img, 0, 0, w, h)
-        return resolve(canvas.getImageData(0, 0, canvas.width, canvas.height))
+        return resolve(ctx.getImageData(0, 0, canvas.width, canvas.height))
       }
 
       img.src = window.URL.createObjectURL(file)
@@ -219,7 +219,7 @@ import { isImage, isVideo } from '../ts/file.ts'
    * @param {Number} maxWidth  The maximum width for the generated thumbnail.
    * @param {Number} maxHeight The maximum height for the generated thumbnail.
    *
-   * @returns {Promise<string>} The generated thumbnail as a base64 dataURL.
+   * @returns {Promise<ImageData>} The generated thumbnail as an ImageData object.
    */
   const generateVideoThumbnail = (file, maxWidth, maxHeight) => {
     return new Promise((resolve) => {
@@ -241,7 +241,7 @@ import { isImage, isVideo } from '../ts/file.ts'
         // Seek to 5 seconds in, or half the length of the video, whichever is less.
         video.currentTime = Math.floor(Math.min(5, video.duration / 2))
         video.pause()
-        return resolve(canvas.getImageData(0, 0, canvas.width, canvas.height))
+        return resolve(ctx.getImageData(0, 0, canvas.width, canvas.height))
       }
 
       video.src = window.URL.createObjectURL(file)
