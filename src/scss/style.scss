@@ -64,3 +64,31 @@ button svg {
 caption {
   display: none;
 }
+
+// Preview
+tr > td:nth-child(1):not([colspan]) {
+  width: 116px;
+  text-align: center;
+  img,
+  svg {
+    max-width: 100px;
+    max-height: 75px;
+    margin: 0 auto;
+  }
+}
+
+// File Size
+tr td:nth-child(3) {
+  width: 150px;
+}
+
+// Upload Date
+tr td:nth-child(4) {
+  width: 160px;
+}
+
+// Delete Button
+tr > td:nth-child(5) {
+  width: 112px;
+  text-align: center;
+}
